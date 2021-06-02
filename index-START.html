@@ -16,19 +16,43 @@
   </form>
 <script>
     const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    
     const cities = []
     fetch(endpoint)
-            .then(res => res.json()
-            .then(data => cities.push([...data])))
-    console.log(`cities`, cities)
+            .then(res => res.json())
+            .then( data => {
+            cities.push(...data)
+            console.log(`data`, data)
+            })
 
     function matchInArray (search, citiesArray) {
-      return citiesArray.filter( city => {
-        return city.city.includes(search)
-      } )
+        
+        return citiesArray.filter( city => {
+          return city.city.includes(search) || city.state.includes(search)
+        })
     }
+    /* const suggestion = matchInArray('New',cities) */
 
-    matchInArray
+    const searchWord = document.querySelector('.search')
+    const suggestion = document.querySelector('.suggestions')
+
+    function displaySuggextion () {
+      const matchedArray = matchInArray(this.value , cities)
+      const html = matchedArray.map( place => {
+        return `
+          <li>
+              <span classe="city">${place.city} , ${place.state}</span>
+              <span class="population">${place.population}</span>
+          </li> 
+        `
+      }).join('');
+      suggestion.innerHTML= html
+    }
+  
+    searchWord.addEventListener('change', displaySuggextion)
+    searchWord.addEventListener('keyup', displaySuggextion)
+    
+   
 
 </script>
 </body>
